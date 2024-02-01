@@ -85,7 +85,8 @@ def login(logger, profile=None, sso_session_name=None, two_factor=False, headed=
 
     # Allow button click.
     logger.log("Allowing AWS login...")
-    driver.refresh() # Hack because stale element error
+    driver.find_element(By.ID, "cli_login_button") # Hack because stale element error
+    driver.refresh()
     login_btn = driver.find_element(By.ID, "cli_login_button")
     login_btn.click()
 
