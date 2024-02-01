@@ -40,9 +40,9 @@ OKTA_PASSWORD=your-okta-password
 ### Two-Factor Authentication
 If your Okta login flow requires 2FA, you must provide a secret key in order for the script to retrieve your one-time password (OTP). You will only need to do this once.
 
-This can be done by scanning the QR code generated from your authenticator application (ex: Google Authenticator) and reading the payload. I recommend the (QRBot app)[https://qrbot.net/locale/en/], if you have an iPhone, as the camera app does not give you the raw payload. The payload should be URI that looks like this:
+This can be done by scanning the QR code generated from your authenticator application (ex: Google Authenticator) and reading the payload. I recommend the [QRBot app](https://qrbot.net/locale/en/), if you have an iPhone, as the iOS camera app does not give you the raw payload. The payload should be a URI that looks like this:
 ```
-otpauth:totp/rando.okta.com%3Ajdnvn%40rando.com?secret=<your-secret-key>&issuer=rando.okta.com
+otpauth://totp/rando.okta.com%3Ajdnvn%40rando.com?secret=<your-secret-key>&issuer=rando.okta.com
 ```
 Copy your secret key and store it as a variable in `.env`
 ```

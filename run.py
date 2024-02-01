@@ -24,13 +24,16 @@ class Logger:
    if not self.quiet: print(f"\033[94m\033[1m{info}\033[0m")
 
   def error(self, error):
-    print(f"\033[91m\033[1m{error}]\033[0m")
+    print(f"\033[91m\033[1m{error}\033[0m")
 
 def login(profile=None, sso_session_name=None, quiet=False):
   logger = Logger(quiet=quiet)
 
-  if not (profile or sso_session_name):
-    logger.error('Must have either: [profile, sso-session-name')
+  if (not profile and not sso_session_name) or (profile and sso_session_name):
+    logger.error('Must provide one of the following arguments [--profile, --sso-session-name]')
+    sys.exit(1)
+  if not OTP_SECRET_KEY:
+    logger.error('Must have OTP_SECRET_KEY environment variable set')
     sys.exit(1)
 
   # run command and get the login url
@@ -45,13 +48,12 @@ def login(profile=None, sso_session_name=None, quiet=False):
   options.add_argument("--headless")
   driver = webdriver.Chrome(options=options)
 
-  logger.log("Logging in...")
-
   # open login url
+  logger.log("Opening login URL...")
   driver.get(link)
 
   # Verify Button click - need to wait a bit before unless it can't find it
-  driver.implicitly_wait(40)
+  driver.implicitly_wait(5)
   driver.find_element(By.ID, "cli_verification_btn").click()
 
   logger.log("Logging into Okta...")
