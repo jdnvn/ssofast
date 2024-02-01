@@ -10,13 +10,16 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-OTP_SECRET_KEY=os.environ.get('OTP_SECRET_KEY')
+OTP_SECRET_KEY = os.environ.get('OTP_SECRET_KEY')
+OKTA_USERNAME = os.environ.get('OKTA_USERNAME')
+OKTA_PASSWORD = os.environ.get('OKTA_PASSWORD')
+
 AWS_SSO_LOGIN_URL_REGEX = r"https://device\.sso\.us-east-1\.amazonaws\.com/\?user_code=.*"
 
 class Logger:
   def __init__(self, quiet=False):
     self.quiet = quiet
-  
+
   def log(self, info):
    if not self.quiet: print(f"\033[94m\033[1m{info}\033[0m")
 
@@ -52,11 +55,15 @@ def login(profile=None, sso_session_name=None, quiet=False):
   driver.find_element(By.ID, "cli_verification_btn").click()
 
   logger.log("Logging into Okta...")
-  # grab okta username and password from dashlane
-  output = os.popen("dcli p okta.com -o json").read()
-  okta_creds = json.loads(output)[0]
-  okta_username = okta_creds["login"]
-  okta_password = okta_creds["password"]
+  if OKTA_USERNAME and OKTA_PASSWORD:
+    okta_username = OKTA_USERNAME
+    okta_password = OKTA_PASSWORD
+  else:
+    # grab okta username and password from dashlane
+    output = os.popen("dcli p okta.com -o json").read()
+    okta_creds = json.loads(output)[0]
+    okta_username = okta_creds["login"]
+    okta_password = okta_creds["password"]
 
   # enter okta credentials
   driver.find_element(By.ID, "okta-signin-username").send_keys(okta_username)
@@ -64,7 +71,7 @@ def login(profile=None, sso_session_name=None, quiet=False):
   driver.find_element(By.ID, "okta-signin-submit").click()
 
   # 2FA
-  logger.log("2FA, lol...")
+  logger.log("2FA, kinda...")
   totp = pyotp.totp.TOTP(OTP_SECRET_KEY)
   otp = totp.now()
 
