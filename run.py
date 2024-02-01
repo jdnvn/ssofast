@@ -30,7 +30,7 @@ class Logger:
   def error(self, error):
     print(f"{Logger.ANSI_RED}{error}{Logger.ANSI_RESET}")
 
-def login(logger, profile=None, sso_session_name=None, two_factor=False):
+def login(logger, profile=None, sso_session_name=None, two_factor=False, headed=False):
   try:
     # run command and get the login url
     command = f"aws sso login {f'--profile {profile}' if profile else f'--sso-session {sso_session_name}'} --no-browser"
@@ -39,9 +39,9 @@ def login(logger, profile=None, sso_session_name=None, two_factor=False):
     process.expect(AWS_SSO_LOGIN_URL_REGEX)
     link = process.after.decode()
 
-    logger.log("Starting up Chrome in headless mode...")
+    logger.log(f"Starting up Chrome in {'headed' if headed else 'headless'} mode...")
     options = webdriver.ChromeOptions()
-    options.add_argument("--headless")
+    if not headed: options.add_argument("--headless")
     driver = webdriver.Chrome(options=options)
 
     # open login url
@@ -102,6 +102,7 @@ if __name__ == "__main__":
   parser.add_argument("--profile", "-p", help="AWS profile name", required=False)
   parser.add_argument("--sso-session-name", "-s", help="AWS SSO session name", required=False)
   parser.add_argument("--two-factor", "-t", help="If two-factor authentication (2FA) is needed. Requires OTP_SECRET_KEY environment variable to be set.", default=False, action='store_true')
+  parser.add_argument("--headed", "-h", help="Run in headed mode (with browser)", default=False, action='store_true')
   parser.add_argument("--quiet", "-q", help="Does not print steps", default=False, action='store_true')
 
   args, _ = parser.parse_known_args()
@@ -113,6 +114,6 @@ if __name__ == "__main__":
     sys.exit(1)
 
   try:
-    login(logger, profile=args.profile, sso_session_name=args.sso_session_name, two_factor=args.two_factor)
+    login(logger, profile=args.profile, sso_session_name=args.sso_session_name, two_factor=args.two_factor, headed=args.headed)
   except Exception as e:
     logger.error(f"an error occurred: {e}")
