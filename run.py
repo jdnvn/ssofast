@@ -93,7 +93,8 @@ def login(logger, profile=None, sso_session_name=None, two_factor=False):
     process.expect(pexpect.EOF)
 
     logger.log("\nDone.")
-  except Exception:
+  except Exception as e:
+    print(e)
     logger.error(f"an error occurred: {process.before}")
 
 if __name__ == "__main__":
