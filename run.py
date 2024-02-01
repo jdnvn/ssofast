@@ -6,6 +6,8 @@ import pyotp
 import sys
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.chrome import ChromeDriverManager
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -42,7 +44,7 @@ def login(logger, profile=None, sso_session_name=None, two_factor=False, headed=
     logger.log(f"Starting up Chrome in {'headed' if headed else 'headless'} mode...")
     options = webdriver.ChromeOptions()
     if not headed: options.add_argument("--headless")
-    driver = webdriver.Chrome(options=options)
+    driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
 
     # open login url
     logger.log("Opening login URL...")

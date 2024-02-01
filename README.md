@@ -1,5 +1,5 @@
 # ssofast
-Script to automate the aws sso process
+Script to automate the AWS SSO login process.
 
 ## Setup
 Clone this repo
@@ -66,3 +66,5 @@ The script outputs logs by default. To silence the logs, add --quiet (or -q):
 ```
 $ python run.py -q --sso-session-name sso
 ```
+
+Additionally, if you have 2FA enabled, you must provide the --two-factor flag
