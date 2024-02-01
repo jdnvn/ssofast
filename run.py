@@ -70,8 +70,8 @@ def login(logger, profile=None, sso_session_name=None, two_factor=False, headed=
 
     if two_factor:
       if not OTP_SECRET_KEY:
-        logger.error('Must have OTP_SECRET_KEY environment variable set')
-        sys.exit(1)
+        raise RuntimeError('Must have OTP_SECRET_KEY environment variable set')
+
       # 2FA
       logger.log("2FA, kinda...")
       totp = pyotp.totp.TOTP(OTP_SECRET_KEY)
@@ -83,10 +83,9 @@ def login(logger, profile=None, sso_session_name=None, two_factor=False, headed=
       otp_verify_btn = driver.find_element(By.XPATH, "//input[contains(@value, 'Verify')]")
       otp_verify_btn.click()
 
-    # Allow button click
+    # Allow button click.
     logger.log("Allowing AWS login...")
-    driver.find_element(By.ID, "cli_login_button")
-    driver.refresh()
+    driver.refresh() # Hack because stale element error
     login_btn = driver.find_element(By.ID, "cli_login_button")
     login_btn.click()
 
@@ -94,8 +93,7 @@ def login(logger, profile=None, sso_session_name=None, two_factor=False, headed=
 
     logger.log("\nDone.")
   except Exception as e:
-    print(e)
-    logger.error(f"an error occurred: {process.before}")
+    logger.error(f"an error occurred: {e.message}")
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
@@ -113,7 +111,4 @@ if __name__ == "__main__":
     logger.error('Must provide one of the following arguments [--profile, --sso-session-name]')
     sys.exit(1)
 
-  try:
-    login(logger, profile=args.profile, sso_session_name=args.sso_session_name, two_factor=args.two_factor, headed=args.headed)
-  except Exception as e:
-    logger.error(f"an error occurred: {e}")
+  login(logger, profile=args.profile, sso_session_name=args.sso_session_name, two_factor=args.two_factor, headed=args.headed)
