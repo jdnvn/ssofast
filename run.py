@@ -107,7 +107,7 @@ if __name__ == "__main__":
 
   logger = Logger(quiet=args.quiet)
 
-  if (not args.profile and not arg.sso_session_name) or (args.profile and args.sso_session_name):
+  if (not args.profile and not args.sso_session_name) or (args.profile and args.sso_session_name):
     logger.error('Must provide one of the following arguments [--profile, --sso-session-name]')
     sys.exit(1)
 
