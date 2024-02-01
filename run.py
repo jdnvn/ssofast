@@ -102,7 +102,7 @@ if __name__ == "__main__":
   parser.add_argument("--profile", "-p", help="AWS profile name", required=False)
   parser.add_argument("--sso-session-name", "-s", help="AWS SSO session name", required=False)
   parser.add_argument("--two-factor", "-t", help="If two-factor authentication (2FA) is needed. Requires OTP_SECRET_KEY environment variable to be set.", default=False, action='store_true')
-  parser.add_argument("--headed", "-h", help="Run in headed mode (with browser)", default=False, action='store_true')
+  parser.add_argument("--headed", "-d", help="Run in headed mode (with browser)", default=False, action='store_true')
   parser.add_argument("--quiet", "-q", help="Does not print steps", default=False, action='store_true')
 
   args, _ = parser.parse_known_args()
